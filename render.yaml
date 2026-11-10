@@ -7,7 +7,6 @@ services:
     rootDir: .
     branch: main
     buildCommand: >
-      corepack enable &&
       pnpm install --frozen-lockfile &&
       pnpm --filter @court-ccms/server exec prisma generate &&
       pnpm --filter @court-ccms/server build
