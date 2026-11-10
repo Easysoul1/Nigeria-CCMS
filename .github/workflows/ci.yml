@@ -9,11 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # No `version:` — pnpm/action-setup@v4 reads packageManager from package.json
+      # (pnpm@12.6.0). Passing both raises ERR_PNPM_BAD_PM_VERSION.
       - uses: pnpm/action-setup@v4
-        with: { version: 12 }
+
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: pnpm }
+        with:
+          node-version: 22
+          cache: pnpm
+
       - run: pnpm install --frozen-lockfile
+
+      # Prisma client must exist before typecheck/lint/build — otherwise the
+      # generated types are missing and @prisma/client imports fail.
+      - run: pnpm --filter @court-ccms/server exec prisma generate
+
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
