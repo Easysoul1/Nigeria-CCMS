@@ -42,6 +42,24 @@ if (!isDev) {
 }
 
 const nextConfig = {
+  // Required by apps/client/Dockerfile — emits a self-contained server.js.
+  output: "standalone",
+
+  // Optional cross-origin proxy. When API_UPSTREAM is set (Vercel + Render),
+  // the browser only ever talks to the frontend origin, so auth cookies stay
+  // first-party (SameSite=Lax) and Safari doesn't drop them.
+  // When it is empty (VPS + Caddy), Caddy does the routing and this is a no-op.
+  async rewrites() {
+    const upstream = process.env.API_UPSTREAM?.trim();
+    if (!upstream) return [];
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${upstream.replace(/\/$/, "")}/api/v1/:path*`,
+      },
+    ];
+  },
+
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

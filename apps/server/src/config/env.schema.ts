@@ -8,11 +8,15 @@ export const envSchema = z.object({
   DATABASE_URL: z.string().min(1).default("file:./dev.db"),
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().int().positive().default(6379),
-  MINIO_ENDPOINT: z.string().min(1),
+  // MinIO is optional: the API and public tracker must start without it.
+  // Document upload/download fails with a clear 503 on use; /health reports
+  // the `minio` check as down. Deployments that only serve case data (no
+  // documents) never need MinIO at all.
+  MINIO_ENDPOINT: z.string().min(1).optional(),
   MINIO_PORT: z.coerce.number().int().positive().default(9000),
   MINIO_USE_SSL: z.coerce.boolean().default(false),
-  MINIO_USER: z.string().min(1),
-  MINIO_PASSWORD: z.string().min(1),
+  MINIO_USER: z.string().min(1).optional(),
+  MINIO_PASSWORD: z.string().min(1).optional(),
   MINIO_BUCKET: z.string().default("ccms-documents"),
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 chars"),
   JWT_EXPIRES_IN: z.string().default("7d"),

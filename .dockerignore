@@ -1,0 +1,32 @@
+# Keep the Docker build context small. Without this, every `docker build`
+# uploads the whole node_modules tree and every build artifact, which
+# makes builds 10x slower and frequently blows out the daemon's memory.
+
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/coverage
+
+# TypeScript incremental-build state. If these ship in the Docker context,
+# `tsc` decides its outputs are already up-to-date and emits NOTHING — the
+# runner stage then fails with "/app/apps/server/dist: not found".
+**/*.tsbuildinfo
+**/.git
+**/.env
+**/.env.local
+**/.env.*.local
+**/*.log
+**/.DS_Store
+**/dev.db
+**/dev.db-journal
+**/prisma/*.db
+**/prisma/*.db-journal
+**/apps/server/scripts/inspect-db.mjs
+backups/
+docs/
+.github/
+.husky/
+.turbo/
+docker/
+infra/

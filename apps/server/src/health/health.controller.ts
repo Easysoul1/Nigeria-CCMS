@@ -25,14 +25,22 @@ export class HealthController {
 
     checks.minio = await this.minioCheck();
 
-    const ok = Object.values(checks).every((check) => check.ok);
-    if (ok) return { status: "ok", checks };
+    // Distinguish a *hard* failure (API cannot serve) from a *soft* one
+    // (optional integration is unavailable).
+    //
+    // Hard: the database. Without it no request can succeed.
+    // Soft: Redis (throttling + queues degrade gracefully) and MinIO
+    //       (documents return 503, everything else works).
+    //
+    // Platform probes (Render healthCheckPath, k8s readinessProbe) hit this
+    // endpoint. If we returned 503 for a missing MinIO they would restart the
+    // container in an infinite loop. That is the bug this function fixes.
+    const databaseOk = checks.database?.ok === true;
+    const allOk = Object.values(checks).every((check) => check.ok);
 
-    // Locally we run SQLite without Redis/MinIO. Report the detail but do not
-    // fail the readiness probe, so developers can still see the app is up.
-    if (process.env.NODE_ENV !== "production") {
-      return { status: "degraded", checks };
-    }
+    if (allOk) return { status: "ok", checks };
+    if (databaseOk) return { status: "degraded", checks };
+
     throw new HttpException({ status: "error", checks }, HttpStatus.SERVICE_UNAVAILABLE);
   }
 
@@ -90,15 +98,22 @@ export class HealthController {
   }
 
   private async minioCheck(): Promise<{ ok: boolean; detail?: string }> {
+    const endpoint = this.config.get<string>("MINIO_ENDPOINT");
+    const user = this.config.get<string>("MINIO_USER");
+    const password = this.config.get<string>("MINIO_PASSWORD");
+    if (!endpoint || !user || !password) {
+      // Optional backend — report clearly rather than probing http://undefined.
+      return { ok: false, detail: "not configured" };
+    }
     try {
       const client = new S3Client({
-        endpoint: `${this.config.get("MINIO_USE_SSL") ? "https" : "http"}://${this.config.get(
-          "MINIO_ENDPOINT",
-        )}:${this.config.get("MINIO_PORT")}`,
+        endpoint: `${this.config.get("MINIO_USE_SSL") ? "https" : "http"}://${endpoint}:${this.config.get(
+          "MINIO_PORT",
+        )}`,
         region: "us-east-1",
         credentials: {
-          accessKeyId: this.config.get<string>("MINIO_USER") ?? "",
-          secretAccessKey: this.config.get<string>("MINIO_PASSWORD") ?? "",
+          accessKeyId: user,
+          secretAccessKey: password,
         },
         forcePathStyle: true,
       });

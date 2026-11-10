@@ -1,0 +1,31 @@
+# Single-origin reverse proxy — the whole reason cookies and CSRF work
+# without cross-origin configuration.
+#
+# The {$DOMAIN} placeholder is replaced by the DOMAIN env var set in
+# docker-compose.prod.yml. Caddy fetches a Let's Encrypt cert automatically
+# on the first request to that hostname.
+
+{$DOMAIN} {
+    encode gzip zstd
+
+    # API paths first — they must not fall through to Next.js.
+    handle /api/* {
+        reverse_proxy api:4000
+    }
+    handle /health {
+        reverse_proxy api:4000
+    }
+    handle /docs* {
+        reverse_proxy api:4000
+    }
+
+    # Everything else is the Next.js app (landing, /search, /dashboard/*…).
+    handle {
+        reverse_proxy web:3000
+    }
+
+    log {
+        output stdout
+        format console
+    }
+}

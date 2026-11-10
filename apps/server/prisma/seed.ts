@@ -1,7 +1,17 @@
 import { PrismaClient, $Enums } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Use Turso in production, local SQLite in dev.
+const url = process.env.TURSO_DATABASE_URL;
+const prisma = url?.startsWith("libsql://")
+  ? new PrismaClient({
+      adapter: new PrismaLibSql({
+        url,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      }),
+    })
+  : new PrismaClient();
 
 interface SeededUser {
   email: string;
@@ -21,8 +31,15 @@ async function mustEnv(key: string): Promise<string> {
 }
 
 async function seedUsers() {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("Refusing to seed in production environment.");
+  // The seed is idempotent and used by two non-dev paths:
+  //   - the deploy entrypoints, which seed only when the DB is empty
+  //   - manual `ALLOW_SEED=1 pnpm --filter @court-ccms/server db:seed`
+  // Without the override, production deploys can never bootstrap their first
+  // admin user, so we make the guard explicit rather than implicit.
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_SEED !== "1") {
+    throw new Error(
+      "Refusing to seed in production. Set ALLOW_SEED=1 if you really want to seed this database.",
+    );
   }
 
   const users: SeededUser[] = [
