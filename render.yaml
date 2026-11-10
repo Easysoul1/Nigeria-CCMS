@@ -9,6 +9,7 @@ services:
     buildCommand: >
       pnpm install --frozen-lockfile &&
       pnpm --filter @court-ccms/server exec prisma generate &&
+      rm -rf apps/server/dist apps/server/*.tsbuildinfo &&
       pnpm --filter @court-ccms/server build
     startCommand: sh apps/server/scripts/render-entrypoint.sh
     healthCheckPath: /api/v1/health
@@ -23,8 +24,19 @@ services:
         sync: false
       - key: ALLOW_SEED
         value: "1"
+      
       # Turso credentials (set in the Render dashboard)
       - key: TURSO_DATABASE_URL
         sync: false
       - key: TURSO_AUTH_TOKEN
         sync: false
+
+      # Seed passwords required by prisma/seed.ts
+      - key: ADMIN_PASSWORD
+        value: ChangeMeAdmin123!
+      - key: REGISTRAR_PASSWORD
+        value: ChangeMeRegistrar123!
+      - key: JUDGE_PASSWORD
+        value: ChangeMeJudge123!
+      - key: LAWYER_PASSWORD
+        value: ChangeMeLawyer123!

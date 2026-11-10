@@ -1,11 +1,40 @@
+# Dependencies
 node_modules
-.dist
+
+# Build outputs
 dist
+.dist
 .next
+.turbo
+coverage
+
+# TypeScript incremental build state
+# These are the reason `nest build` skips emitting dist/ on a fresh clone:
+# tsc reads the cached state, decides nothing changed, and outputs nothing.
+*.tsbuildinfo
+
+# Environment
 .env
 .env.local
-*.log
-coverage
-.turbo
+.env.*.local
+
+# Local SQLite state
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Prisma
+dev.db
+prisma/dev.db
 prisma/migrations
 !apps/server/prisma/migrations
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

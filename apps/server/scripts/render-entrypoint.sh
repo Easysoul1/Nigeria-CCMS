@@ -9,11 +9,10 @@ cd apps/server
 echo "[render] Checking database…"
 USER_COUNT="$(node -e '
   const { PrismaClient } = require("@prisma/client");
-  const { PrismaLibSQL } = require("@prisma/adapter-libsql");
-  const { createClient } = require("@libsql/client");
+  const { PrismaLibSql } = require("@prisma/adapter-libsql");
   const url = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
-  const adapter = new PrismaLibSQL(createClient({ url, authToken }));
+  const adapter = new PrismaLibSql({ url, authToken });
   const p = new PrismaClient({ adapter });
   p.user.count()
     .then((n) => { console.log(n); return p.$disconnect(); })
@@ -26,12 +25,16 @@ esac
 
 if [ "$USER_COUNT" -eq 0 ]; then
   echo "[render] Empty database — seeding"
-  # The seed script uses the same Turso adapter.
   TURSO_DATABASE_URL="$TURSO_DATABASE_URL" TURSO_AUTH_TOKEN="$TURSO_AUTH_TOKEN" \
     ALLOW_SEED=1 ./node_modules/.bin/prisma db seed || \
-    echo "[render] WARN: seed failed" >&2
+    echo "[render] WARN: seed failed — check ADMIN_PASSWORD, REGISTRAR_PASSWORD, etc." >&2
 else
   echo "[render] $USER_COUNT users present — skipping seed"
+fi
+
+if [ ! -f dist/main.js ]; then
+  echo "[render] FATAL: dist/main.js not found. The build step failed to compile the server." >&2
+  exit 1
 fi
 
 echo "[render] Starting API"
