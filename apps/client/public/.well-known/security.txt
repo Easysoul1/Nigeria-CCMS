@@ -1,0 +1,9 @@
+Contact: mailto:security@fhc.gov.ng
+Preferred-Languages: en
+Canonical: https://fhc.gov.ng/.well-known/security.txt
+Policy: https://fhc.gov.ng/terms
+
+# If you believe you have found a security vulnerability in the Federal High Court
+# Case Management or Public Tracking System, please email the address above with a
+# short description and reproduction steps. Please do not publicly disclose the
+# issue before we have had a reasonable chance to respond.

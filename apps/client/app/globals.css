@@ -1,0 +1,288 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: #1E7103;
+    --primary-hover: #175A02;
+    --accent-large: #379237;
+    --surface-page: #FFFFFF;
+    --surface-raised: rgba(255, 255, 255, 0.96);
+    --surface-subtle: #F6F6F6;
+    --surface-tint: #EDFBE2;
+    --border-default: #D5EAD8;
+    --text-primary: #0F172A;
+    --text-secondary: #2F3B40;
+    --text-muted: #5B6B73;
+    --sidebar-bg: #0C1406;
+    --sidebar-text: #EDFBE2;
+    --sidebar-active: #1E7103;
+    --sidebar-muted: #B7CCAE;
+    --sidebar-subtle: #8AA37F;
+    --status-pending-fg: #7A4B00;
+    --status-pending-bg: #FFF4DB;
+    --status-approved-fg: #1E7103;
+    --status-approved-bg: #EDFBE2;
+    --status-rejected-fg: #B42318;
+    --status-rejected-bg: #FEE4E2;
+    --status-info-fg: #175CD3;
+    --status-info-bg: #EFF8FF;
+    --status-neutral-fg: #2F3B40;
+    --status-neutral-bg: #F6F6F6;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-pill: 999px;
+    --shadow-e1: 0 1px 3px rgba(15, 23, 42, .12);
+    --shadow-e2: 0 4px 16px rgba(15, 23, 42, .16);
+    --focus-ring: 0 0 0 2px #fff, 0 0 0 5px #1E7103;
+    --sidebar-width: 264px;
+    --sidebar-collapsed: 72px;
+    --target-min: 44px;
+    --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+    --duration-fast: 160ms;
+    --duration-enter: 260ms;
+  }
+}
+
+@layer base {
+  * { border-color: var(--border-default); }
+  html, body { overflow-x: hidden; }
+  body { background-color: var(--surface-page); color: var(--text-primary); font-family: var(--font-body, "DM Sans", system-ui, sans-serif); }
+  h1, h2, h3, h4 { font-family: var(--font-heading, "Outfit", system-ui, sans-serif); }
+  input, select, textarea, button { font: inherit; }
+}
+
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes motion-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-10deg) scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+@keyframes motion-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes motion-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------------------- */
+/*  Public marketing canvas                                                  */
+/*  A scoped dark surface used ONLY by / and /search. Composes existing FHC  */
+/*  tokens (--sidebar-*, --accent-large) into a Basement-Studio-inspired     */
+/*  bunker palette, adapted for WCAG 2.2 AA: body copy runs 1.5 leading,    */
+/*  counters never go below 11px, and every interactive element keeps the    */
+/*  44px target rule. Nothing outside .public-dark is affected.              */
+/* ------------------------------------------------------------------------- */
+
+.public-dark {
+  --pd-void: #0C1406;                    /* page canvas — FHC sidebar-bg */
+  --pd-bone: #EDFBE2;                    /* primary text — FHC sidebar-text */
+  --pd-concrete: #B7CCAE;                /* secondary text — FHC sidebar-muted */
+  --pd-ash: #8AA37F;                     /* dimmed labels — FHC sidebar-subtle */
+  --pd-rule: rgba(237, 251, 226, 0.10);  /* 1px hairlines */
+  --pd-rule-strong: rgba(237, 251, 226, 0.22);
+  --pd-field: #0A1105;                   /* input fill, one step below canvas */
+  --pd-signal: #6FCF52;                  /* live pulse, bright green */
+  --pd-accent: #379237;                  /* CTA fill — FHC accent-large */
+  --pd-accent-hover: #45A643;
+  --pd-focus: 0 0 0 2px #0C1406, 0 0 0 5px #6FCF52;
+}
+
+.pd-canvas { background: var(--pd-void); color: var(--pd-bone); font-family: var(--font-body, "DM Sans", system-ui, sans-serif); }
+.pd-hairline { border-color: var(--pd-rule); }
+.pd-hairline-strong { border-color: var(--pd-rule-strong); }
+
+/* Display typography — the reference's signature compressed scale. */
+.pd-display {
+  font-family: var(--font-heading, "Outfit", system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+.pd-display-hero {
+  font-family: var(--font-heading, "Outfit", system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+  font-size: clamp(2.75rem, 8.4vw, 6rem);
+}
+.pd-display-section {
+  font-family: var(--font-heading, "Outfit", system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+}
+.pd-project {
+  font-family: var(--font-heading, "Outfit", system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+}
+.pd-eyebrow {
+  font-family: var(--font-heading, "Outfit", system-ui, sans-serif);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Body copy — 1.5 leading (WCAG 1.4.12) instead of the reference's 1.0. */
+.pd-body {
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+}
+.pd-body-lg {
+  font-size: 1.1875rem;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+.pd-small { font-size: 0.8125rem; line-height: 1.5; letter-spacing: 0.01em; }
+.pd-counter {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pd-mono {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+/* Form controls */
+.pd-input {
+  background: var(--pd-field);
+  border: 1px solid var(--pd-rule-strong);
+  color: var(--pd-bone);
+  border-radius: 0;
+  min-height: 56px;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+  font-size: 1.0625rem;
+  letter-spacing: 0.02em;
+  padding: 0.875rem 1rem;
+}
+.pd-input::placeholder { color: var(--pd-ash); }
+.pd-input:focus-visible { outline: none; box-shadow: var(--pd-focus); border-color: var(--pd-signal); }
+
+/* Buttons */
+.pd-btn-primary {
+  background: var(--pd-accent);
+  color: #FFFFFF;
+  border: 1px solid var(--pd-accent);
+  border-radius: 0;
+  min-height: 56px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition: background-color 0.14s linear, border-color 0.14s linear;
+}
+.pd-btn-primary:hover { background: var(--pd-accent-hover); border-color: var(--pd-accent-hover); }
+.pd-btn-primary:focus-visible { outline: none; box-shadow: var(--pd-focus); }
+.pd-btn-ghost {
+  background: transparent;
+  color: var(--pd-bone);
+  border: 1px solid var(--pd-rule-strong);
+  border-radius: 0;
+  min-height: 44px;
+  font-weight: 600;
+  transition: border-color 0.14s linear, background-color 0.14s linear;
+}
+.pd-btn-ghost:hover { border-color: var(--pd-concrete); background: rgba(237, 251, 226, 0.04); }
+.pd-btn-ghost:focus-visible { outline: none; box-shadow: var(--pd-focus); }
+
+/* Tag chip — the reference's 0-radius charcoal tag, on our palette. */
+.pd-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  background: rgba(237, 251, 226, 0.06);
+  border: 1px solid var(--pd-rule);
+  color: var(--pd-bone);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.33;
+  border-radius: 0;
+}
+
+/* Superscript counter — never below 11px for WCAG. */
+.pd-sup { font-size: 0.6875rem; color: var(--pd-ash); letter-spacing: 0.04em; font-weight: 600; margin-left: 0.25rem; }
+
+/* Focus ring for any custom interactive element */
+.pd-focus:focus-visible { outline: none; box-shadow: var(--pd-focus); }
+
+/* Online pulse — the reference's single animated colour, on our green. */
+@keyframes pd-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+.pd-pulse { animation: pd-pulse 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pd-pulse { animation: none; opacity: 1; }
+  .pd-btn-primary, .pd-btn-ghost { transition: none; }
+}
+
+@layer utilities {
+  .focus-ring:focus-visible {
+    box-shadow: var(--focus-ring);
+    outline: none;
+  }
+  .focus-ring:focus:not(:focus-visible) {
+    outline: none;
+  }
+  .motion-rise {
+    animation: motion-rise var(--duration-enter) var(--ease-out-strong) both;
+  }
+  .motion-stamp {
+    animation: motion-stamp 220ms var(--ease-out-strong) 90ms both;
+  }
+  .motion-slide-up {
+    animation: motion-slide-up 200ms var(--ease-out-strong) both;
+  }
+}
+
+/* Reduced motion keeps the comprehension aids (opacity) and drops the
+   position changes. Motion is never removed entirely. */
+@media (prefers-reduced-motion: reduce) {
+  .motion-rise,
+  .motion-stamp,
+  .motion-slide-up {
+    animation: motion-fade var(--duration-fast) ease both;
+  }
+}

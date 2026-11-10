@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /case/
+Disallow: /login
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /help
+Allow: /accessibility
+Allow: /status
+Allow: /register-lawyer
+
+# Court case records are personal data. They must not be indexed by search engines
+# unless the Court has explicitly decided to publish them.
